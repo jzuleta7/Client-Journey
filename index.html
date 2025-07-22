@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Onboarding Process Flow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --athena-purple: #5D28F0;
+            --athena-dark: #0B051D;
+            --athena-off-white: #F9F9F9;
+            --athena-light-gray: #EAEAEB;
+            --athena-medium-gray: #71717A;
+            --athena-green: #16a34a;
+            --athena-light-green: #f0fdf4;
+            --athena-dark-green-text: #15803d;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--athena-off-white);
+            color: var(--athena-dark);
+        }
+        section[id] {
+            scroll-margin-top: 80px;
+        }
+        .step-group, .step-single {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+        }
+        .process-card {
+            transition: all 0.3s ease-in-out;
+            border: 1px solid var(--athena-light-gray);
+            background-color: white;
+            position: relative;
+            display: flex; /* Use flex for vertical centering */
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            flex-grow: 1; /* Allow cards to grow */
+        }
+        .process-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px -5px rgb(0 0 0 / 0.1);
+            border-color: var(--athena-purple);
+        }
+        .process-card h3 {
+            color: var(--athena-dark);
+            transition: color 0.3s ease-in-out;
+        }
+        .process-card:hover h3 {
+            color: var(--athena-purple);
+        }
+        .cpm-card {
+            background-color: var(--athena-off-white);
+            flex-grow: 0; /* Don't allow CPM card to grow */
+            min-height: 4rem; /* Give it a minimum height */
+        }
+        .phase-title {
+            color: var(--athena-purple);
+        }
+        .process-card.completed {
+            background-color: var(--athena-light-green);
+            border-color: var(--athena-green);
+        }
+        .process-card.completed.cpm-card {
+             background-color: var(--athena-light-green); 
+        }
+        .process-card.completed h3 {
+            color: var(--athena-dark-green-text);
+        }
+        .process-card.completed .checkmark {
+            display: block;
+        }
+        .checkmark {
+            display: none;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+        .checkmark svg {
+            color: var(--athena-green);
+        }
+        .resource-section h3 {
+            color: var(--athena-dark);
+        }
+        nav {
+             background-color: rgba(255, 255, 255, 0.85);
+        }
+        .nav-link {
+            color: var(--athena-dark);
+        }
+        .nav-link:hover {
+            background-color: var(--athena-light-gray);
+        }
+        .text-muted {
+            color: var(--athena-medium-gray);
+        }
+        .step-arrow {
+            position: absolute;
+            top: 50%;
+            right: -2rem; /* Half of parent gap */
+            transform: translateY(-50%);
+            color: #D1D1D6;
+        }
+        .resource-button {
+            background-color: white;
+            border: 1px solid var(--athena-light-gray);
+            transition: all 0.3s ease-in-out;
+        }
+        .resource-button:hover {
+            background-color: var(--athena-purple);
+            color: white;
+            border-color: var(--athena-purple);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px -5px rgb(0 0 0 / 0.1);
+        }
+        .resource-button:hover p, .resource-button:hover h3 {
+            color: white;
+        }
+        .dropdown-menu {
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+
+    </style>
+</head>
+<body>
+    <nav class="sticky top-0 z-50 backdrop-blur-lg shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                     <h2 class="text-xl font-bold text-inherit">Client Journey 2025</h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#phase-0" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Start Here</a>
+                        <a href="#phase-1" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Phase 1</a>
+                        <a href="#phase-2" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Phase 2</a>
+                        <a href="#phase-3" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Phase 3</a>
+                        <a href="#phase-4" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Phase 4</a>
+                        <a href="#resources" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Resources</a>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" id="mobile-menu-button" class="bg-gray-100 inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--athena-purple)]" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#phase-0" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Start Here</a>
+                <a href="#phase-1" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Phase 1: Preliminaries</a>
+                <a href="#phase-2" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Phase 2: Matching</a>
+                <a href="#phase-3" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Phase 3: KOC</a>
+                <a href="#phase-4" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Phase 4: 100 Days</a>
+                <a href="#resources" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Resources</a>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="pt-8 p-4 sm:p-8">
+        <div class="max-w-7xl mx-auto">
+            <header class="text-center mb-16">
+                <h1 class="text-4xl md:text-5xl font-bold">Client Onboarding Journey</h1>
+                <p class="mt-4 text-lg text-muted">An interactive guide for Client Partnership Managers. Click a card to mark the stage as complete.</p>
+            </header>
+
+            <section id="phase-0" class="mb-16">
+                <h2 class="text-3xl font-bold text-center mb-8 phase-title">Phase 0: Start Here</h2>
+                <div class="flex justify-center items-stretch gap-8 flex-wrap">
+                    <a href="https://docs.google.com/document/d/1ueM_BrCnx3pei07bwNw4iO5FgCIAsNCjE3x8GbJDyg0/edit?usp=sharing" id="step-read-first" class="process-card rounded-xl shadow-sm p-6 w-full max-w-sm">
+                        <span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
+                        <h3 class="text-xl font-semibold mb-2">Read This First</h3>
+                        <p class="text-muted">Official updated client journey and useful links.</p>
+                    </a>
+                    <a href="https://drive.google.com/file/d/1aLTzZIWF0p4w8hRzqibvDEN-BRmuwkcy/view?usp=sharing" id="step-sla" class="process-card rounded-xl shadow-sm p-6 w-full max-w-sm">
+                         <span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
+                        <h3 class="text-xl font-semibold mb-2">Service Level Agreements (SLA)</h3>
+                        <p class="text-muted">Key timelines and response expectations.</p>
+                    </a>
+                </div>
+            </section>
+
+            <div class="text-center my-8"><svg class="mx-auto" width="24" height="48" viewBox="0 0 24 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0V46M12 46L8 42M12 46L16 42" stroke="#D1D1D6" stroke-width="2"/></svg></div>
+
+            <section id="phase-1" class="mb-16">
+                <h2 class="text-3xl font-bold text-center mb-12 phase-title">Phase 1: Preliminary Steps</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 text-center">
+                    <div class="step-single">
+                        <a href="https://docs.google.com/document/d/1vvYjdtHmZs-JKosSJPRKNy1kCwHvMLlBe7iJXUx9yQs/edit?usp=sharing" id="step-signup" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">1️⃣</div><h3 class="text-lg font-semibold">Sign Up Flow</h3><p class="text-sm text-muted mt-1">Client initiates the process.</p></a>
+                        <div class="step-arrow hidden lg:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></div>
+                    </div>
+                    <div class="step-single">
+                        <a href="https://docs.google.com/document/d/1zgi8CdSGDuTbmPCEsbBLRPDS6LIgJ_RC5O6gEm39aYc/edit?usp=sharing" id="step-fit-call" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">2️⃣</div><h3 class="text-lg font-semibold">Two-Way Fit Call</h3><p class="text-sm text-muted mt-1">Assessing mutual compatibility.</p></a>
+                        <div class="step-arrow hidden lg:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></div>
+                    </div>
+                    <div class="step-group" data-group-id="group-survey">
+                        <a href="https://docs.google.com/document/d/1DkvY4CoRS3pfUSWLNMBh2jMhRFzW27HTEeDcJwlrJRo/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">3️⃣</div><h3 class="text-lg font-semibold">Survey & Payment</h3><p class="text-sm text-muted mt-1">Client completes matching survey.</p></a>
+                         <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">CPM: Update Calendar Weekly</h3></a>
+                        <div class="step-arrow hidden lg:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></div>
+                    </div>
+                    <div class="step-group" data-group-id="group-discovery">
+                        <a href="https://docs.google.com/document/d/1CsvH5kK3n4iExFc9uz7jYpzUuAWjfiUB0Ccyau35fuE/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">4️⃣</div><h3 class="text-lg font-semibold">Discovery Call</h3><p class="text-sm text-muted mt-1">OM is paired and researches client background.</p></a>
+                         <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">CPM: Conduct In-depth Research</h3></a>
+                    </div>
+                </div>
+                 <div class="flex justify-center mt-12">
+                    <a href="https://docs.google.com/document/d/163EqcI_fa3KVitOe_WWG5uX1xvY0Xcjy7e4LYBWKyzg/edit?usp=sharing" id="step-prelim-faq" class="process-card block rounded-xl shadow-sm p-6 w-full max-w-md"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="text-xl font-semibold mb-2">FAQs: Preliminary Steps</h3><p class="text-muted">Common questions for this phase.</p></a>
+                </div>
+            </section>
+
+            <div class="text-center my-8"><svg class="mx-auto" width="24" height="48" viewBox="0 0 24 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0V46M12 46L8 42M12 46L16 42" stroke="#D1D1D6" stroke-width="2"/></svg></div>
+            
+            <section id="phase-2" class="mb-16">
+                <h2 class="text-3xl font-bold text-center mb-12 phase-title">Phase 2: Matching</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 text-center">
+                    <div class="step-group" data-group-id="group-om-assign">
+                        <a href="https://docs.google.com/document/d/1SJpHeQ3ezlgOcUZWcnI_Pu6E2H7NsJMdWg0rS7wfqMI/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">5️⃣</div><h3 class="text-lg font-semibold">Early OM Assignment</h3><p class="text-sm text-muted mt-1">OM is assigned to the client.</p></a>
+                        <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">OM is assigned to a Client after the user manual creation.</h3></a>
+                        <div class="step-arrow hidden lg:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></div>
+                    </div>
+                    <div class="step-group" data-group-id="group-prematch">
+                        <a href="https://docs.google.com/document/d/1dN89Rd-t54mMNAOsuzBCclmbcAUEj19fuk0C7wa7c14/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">6️⃣</div><h3 class="text-lg font-semibold">XP Identified for the client / Pre Matching Call</h3><p class="text-sm text-muted mt-1">SLA: 2-3 weeks from Discovery Call.</p></a>
+                         <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">CPM: Conduct Pre-Match Call</h3></a>
+                        <div class="step-arrow hidden lg:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></div>
+                    </div>
+                    <div class="step-group" data-group-id="group-match-call">
+                        <a href="https://docs.google.com/document/d/1UAOR6hS-JtMFDaXfASnr4t2B2RCqaxdw61lAb9nz5tA/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">7️⃣</div><h3 class="text-lg font-semibold">Matching Call (Facilitated by DeX)</h3><p class="text-sm text-muted mt-1">SLA: 4-5 days to KOC.</p></a>
+                         <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">CPM: Conduct Matching Call</h3></a>
+                    </div>
+                </div>
+                <div class="flex justify-center mt-12 gap-8 flex-wrap">
+                    <a href="https://drive.google.com/drive/folders/1ow80x2ibqdh-kDYR0rQeaYTk3BZ3UkgO?usp=sharing" id="step-hubspot-matching" class="process-card block rounded-xl shadow-sm p-6 w-full max-w-md"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="text-xl font-semibold mb-2">HubSpot Actions</h3><p class="text-muted">Required HubSpot tasks for this phase.</p></a>
+                    <a href="https://docs.google.com/document/d/1VE8-P6rn666jWL7wnNK_ddG4uqyq2ZMQT3Mdf84dKUQ/edit?usp=sharing" id="step-matching-faq" class="process-card block rounded-xl shadow-sm p-6 w-full max-w-md"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="text-xl font-semibold mb-2">FAQs: Matching</h3><p class="text-muted">Common questions for this phase.</p></a>
+                </div>
+            </section>
+
+            <div class="text-center my-8"><svg class="mx-auto" width="24" height="48" viewBox="0 0 24 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0V46M12 46L8 42M12 46L16 42" stroke="#D1D1D6" stroke-width="2"/></svg></div>
+            
+            <section id="phase-3" class="mb-16">
+                <h2 class="text-3xl font-bold text-center mb-8 phase-title">Phase 3: The Kick-Off Call</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 text-center">
+                     <div class="step-group" data-group-id="group-pre-koc">
+                        <a href="https://docs.google.com/document/d/1xZ1R49RJXqP0dxd1jfChu_RF8d2Y8G2Y6Zy3hks-snk/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">8️⃣</div><h3 class="text-xl font-semibold mb-2">Pre-KOC</h3><p class="text-muted">Send client invite within 3-4 hours of YBC receipt. KOC should be booked in 4 days.</p></a>
+                         <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">CPM: Send Invites & Reminders</h3></a>
+                         <div class="step-arrow hidden lg:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></div>
+                    </div>
+                     <div class="step-group" data-group-id="group-koc">
+                        <a href="https://docs.google.com/document/d/1Uiy55s1iD9WztOOgbI-W_nxsv--2f5AqY7p7ejmdeaA/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">9️⃣</div><h3 class="text-xl font-semibold mb-2">KOC - Day 1 of Partnership</h3><p class="text-muted">The official start of the client partnership.</p></a>
+                        <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">CPM: Facilitate KOC</h3></a>
+                        <div class="step-arrow hidden lg:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></div>
+                    </div>
+                    <div class="step-group" data-group-id="group-post-koc">
+                        <a href="https://docs.google.com/document/d/1Uiy55s1iD9WztOOgbI-W_nxsv--2f5AqY7p7ejmdeaA/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">🔟</div><h3 class="text-xl font-semibold mb-2">Post KOC Actions</h3><p class="text-muted">Update ticket status and prepare for check-ins.</p></a>
+                        <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">CPM: Complete HubSpot Admin</h3></a>
+                    </div>
+                </div>
+                 <div class="flex justify-center mt-12 gap-8 flex-wrap">
+                    <a href="https://drive.google.com/drive/folders/15Dkv4BZIPmmoZ8m4tgNWOcEkTSzhUFQC?usp=sharing" id="step-hubspot-koc" class="process-card block rounded-xl shadow-sm p-6 w-full max-w-md"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="text-xl font-semibold mb-2">HubSpot Actions</h3><p class="text-muted">Required HubSpot tasks for this phase.</p></a>
+                    <a href="https://docs.google.com/document/d/15up08hYV-VQkz7RCGwVMJLVK-eoXdPPgwyfSvz6pOAo/edit?usp=sharing" id="step-koc-faq" class="process-card block rounded-xl shadow-sm p-6 w-full max-w-md"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="text-xl font-semibold mb-2">FAQs: KOC</h3><p class="text-muted">Common questions for this phase.</p></a>
+                </div>
+            </section>
+
+            <div class="text-center my-8"><svg class="mx-auto" width="24" height="48" viewBox="0 0 24 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0V46M12 46L8 42M12 46L16 42" stroke="#D1D1D6" stroke-width="2"/></svg></div>
+
+            <section id="phase-4" class="mb-16">
+                <h2 class="text-3xl font-bold text-center mb-12 phase-title">Phase 4: The First 100 Days</h2>
+                <div class="flex flex-col items-center gap-8">
+                    <div class="grid md:grid-cols-2 gap-8 w-full max-w-5xl">
+                        <div class="step-group" data-group-id="group-4wci">
+                            <a href="https://docs.google.com/document/d/15up08hYV-VQkz7RCGwVMJLVK-eoXdPPgwyfSvz6pOAo/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">1️⃣1️⃣</div><h3 class="text-xl font-semibold mb-2">4-Week Check-In (4WCI)</h3><p class="text-muted">Reflect on progress and commitment post-KOC.</p></a>
+                            <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">CPM: Conduct 4WCI Call & Update HubSpot</h3></a>
+                            <div class="step-arrow hidden md:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></div>
+                        </div>
+                        <div class="step-group" data-group-id="group-8wci">
+                            <a href="https://docs.google.com/document/d/1ek2R7y5yF4ml-yHHAe30ge7o1DIUBopz2HD_UYyAEjY/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">1️⃣2️⃣</div><h3 class="text-xl font-semibold mb-2">Facilitated Feedback (FF)</h3><p class="text-muted">Deeper dive into partnership, growth, and improvements.</p></a>
+                             <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">CPM: Lead FF Session & Document Outcomes</h3></a>
+                        </div>
+                    </div>
+                    <div class="text-center my-4"><svg class="mx-auto" width="24" height="48" viewBox="0 0 24 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0V46M12 46L8 42M12 46L16 42" stroke="#D1D1D6" stroke-width="2"/></svg></div>
+                    <div class="flex justify-center w-full">
+                        <div class="step-group w-full max-w-lg" data-group-id="group-12wci">
+                            <a href="https://docs.google.com/document/d/1LHu6L--HfiJKIYGD2o7ofYw3ysjUTLyOh7zOelGt5mE/edit?usp=sharing" class="process-card rounded-xl shadow-sm p-6"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><div class="text-3xl mb-3">1️⃣3️⃣</div><h3 class="text-xl font-semibold mb-2">12-Week Check-In / Monthly Check-In</h3><p class="text-muted">Ongoing progress review and value assessment.</p></a>
+                             <a href="#" class="process-card cpm-card rounded-xl shadow-sm p-3"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="font-semibold text-sm">CPM: Conduct Monthly CI & Plan Next Steps</h3></a>
+                        </div>
+                    </div>
+                </div>
+                 <div class="flex justify-center mt-12">
+                    <a href="https://docs.google.com/document/d/19kBt4_-WvPdqMAtMO5QBQEuGVzw2tyPxLUzQ8LgG4hY/edit?usp=sharing" id="step-100day-faq" class="process-card block rounded-xl shadow-sm p-6 w-full max-w-md"><span class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span><h3 class="text-xl font-semibold mb-2">FAQs: 100 Day Journey</h3><p class="text-muted">Common questions for this phase.</p></a>
+                </div>
+            </section>
+
+            <section id="resources" class="mt-24 pt-12 border-t border-[#EAEAEB]">
+                <h2 class="text-3xl font-bold text-center mb-12">Supporting Resources</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <a href="https://drive.google.com/drive/folders/1e1ePblYgjS135GbQYbDyhB7-imo3u53p?usp=sharing" target="_blank" rel="noopener noreferrer" id="res-hubspot" class="resource-button rounded-xl shadow-sm p-8 flex flex-col items-center justify-center text-center">
+                        <h3 class="text-2xl font-semibold mb-2">HubSpot Steps</h3>
+                        <p class="text-muted">Access all HubSpot related SOPs and guides.</p>
+                    </a>
+                    <a href="https://drive.google.com/drive/folders/1FVqS1sG8L_iXPRavgp_G2eGunbSjKq0I?usp=sharing" target="_blank" rel="noopener noreferrer" id="res-templates" class="resource-button rounded-xl shadow-sm p-8 flex flex-col items-center justify-center text-center">
+                        <h3 class="text-2xl font-semibold mb-2">Templates</h3>
+                        <p class="text-muted">Find all necessary templates and scripts.</p>
+                    </a>
+                    <div class="relative">
+                        <button id="video-dropdown-button" class="resource-button rounded-xl shadow-sm p-8 flex flex-col items-center justify-center text-center w-full h-full">
+                            <h3 class="text-2xl font-semibold mb-2">Video Library</h3>
+                            <p class="text-muted">Watch all video tutorials and game films.</p>
+                        </button>
+                        <div id="video-dropdown-menu" class="dropdown-menu absolute bottom-full mb-2 w-full bg-white rounded-xl shadow-lg border border-gray-200 z-10 hidden opacity-0 transform -translate-y-2">
+                             <a href="https://www.loom.com/share/b6000954c85d4da09d4fa39dfedc32e7?sid=ef6f9f98-f4a9-4316-9aed-fc8b63d73a33" target="_blank" rel="noopener noreferrer" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">Calendly Walkthru</a>
+                             <a href="https://drive.google.com/file/d/1PwsK61VjACUB62rxJuCOnQCS8edLAB34/view" target="_blank" rel="noopener noreferrer" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">KOC Game Film</a>
+                             <a href="https://www.loom.com/share/c18c8d19359748f38383f6e3e27bf08b?sid=7c3812f9-b9f8-4967-a8f7-bc477f3fd1ef" target="_blank" rel="noopener noreferrer" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">Adding Prep Blocks Pt. 1</a>
+                             <a href="https://www.loom.com/share/104c0eadc28c434f8850f027732794ac?sid=b2c1f1b8-94d6-433c-b099-72ac9a1d6707" target="_blank" rel="noopener noreferrer" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">Adding Prep Blocks Pt. 2</a>
+                             <a href="https://www.loom.com/share/4436221895b942aa94dd65ec166b4da6?sid=89b050f7-186b-45aa-935c-bf82bebe1d72" target="_blank" rel="noopener noreferrer" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">Adding Prep Blocks Pt. 3</a>
+                             <a href="https://www.loom.com/share/7c085eba09a04138938b5d15379b2f4a?sid=04c9ab7b-f773-46d1-ac19-6387d34fd1b3" target="_blank" rel="noopener noreferrer" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">Accepting Transfer Events</a>
+                             <a href="https://drive.google.com/file/d/1tWrSIy9VEOThq_XDRGj1mrZZKTur8J8O/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">4WCI Game Film</a>
+                             <a href="https://drive.google.com/file/d/1DEjZUBPU6_XEHGD9O21UaDCfZIp-Ym31/view" target="_blank" rel="noopener noreferrer" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">8WCI Game Film - FF</a>
+                             <a href="https://drive.google.com/file/d/1GMmnv5Xgl0dQArsluRoqQbZmWUEeLxPv/view" target="_blank" rel="noopener noreferrer" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">12WCI Game Film</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer class="text-center pb-8 text-sm text-muted">
+        
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const handleCardClick = (event) => {
+            event.preventDefault();
+            const card = event.currentTarget;
+            const linkUrl = card.href;
+            const parentGroup = card.closest('.step-group, .step-single');
+            
+            let isAlreadyCompleted;
+
+            if (parentGroup) {
+                isAlreadyCompleted = parentGroup.querySelector('.process-card').classList.contains('completed');
+                const cardsInGroup = parentGroup.querySelectorAll('.process-card');
+                cardsInGroup.forEach(c => c.classList.toggle('completed', !isAlreadyCompleted));
+                
+                const groupId = parentGroup.dataset.groupId || card.id;
+                if (!isAlreadyCompleted) {
+                    localStorage.setItem(groupId, 'true');
+                } else {
+                    localStorage.removeItem(groupId);
+                }
+            } else {
+                isAlreadyCompleted = card.classList.contains('completed');
+                const cardId = card.id;
+                if (cardId) {
+                    card.classList.toggle('completed');
+                    if (!isAlreadyCompleted) {
+                        localStorage.setItem(cardId, 'true');
+                    } else {
+                        localStorage.removeItem(cardId);
+                    }
+                }
+            }
+
+            if (linkUrl && !linkUrl.endsWith('#') && !isAlreadyCompleted) {
+                 window.open(linkUrl, '_blank', 'noopener,noreferrer');
+            }
+        };
+
+        const loadCompletionState = () => {
+            document.querySelectorAll('.step-group, .step-single').forEach(group => {
+                const groupId = group.dataset.groupId || group.querySelector('.process-card').id;
+                if (localStorage.getItem(groupId) === 'true') {
+                    group.querySelectorAll('.process-card').forEach(c => c.classList.add('completed'));
+                }
+            });
+            document.querySelectorAll('.process-card:not(.cpm-card)').forEach(card => {
+                if (!card.closest('.step-group') && !card.closest('.step-single')) {
+                    const cardId = card.id;
+                    if (cardId && localStorage.getItem(cardId) === 'true') {
+                        card.classList.add('completed');
+                    }
+                }
+            });
+        };
+
+        document.querySelectorAll('.process-card, .resource-button').forEach(card => {
+            card.addEventListener('click', handleCardClick);
+        });
+        
+        loadCompletionState();
+        
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        const openIcon = mobileMenuButton.querySelector('svg:first-child');
+        const closeIcon = mobileMenuButton.querySelector('svg:last-child');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+            mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+            mobileMenu.classList.toggle('hidden');
+            openIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        });
+
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
+                mobileMenu.classList.add('hidden');
+                openIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            });
+        });
+
+        // Dropdown Logic
+        const videoDropdownButton = document.getElementById('video-dropdown-button');
+        const videoDropdownMenu = document.getElementById('video-dropdown-menu');
+
+        videoDropdownButton.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent click from closing menu immediately
+            const isHidden = videoDropdownMenu.classList.contains('hidden');
+            if (isHidden) {
+                videoDropdownMenu.classList.remove('hidden');
+                setTimeout(() => {
+                    videoDropdownMenu.classList.remove('opacity-0', '-translate-y-2');
+                }, 10);
+            } else {
+                videoDropdownMenu.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => {
+                    videoDropdownMenu.classList.add('hidden');
+                }, 200);
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!videoDropdownButton.contains(event.target) && !videoDropdownMenu.contains(event.target)) {
+                videoDropdownMenu.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => {
+                    videoDropdownMenu.classList.add('hidden');
+                }, 200);
+            }
+        });
+    });
+    </script>
+</body>
+</html>
